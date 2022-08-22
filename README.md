@@ -1,3 +1,7 @@
+![flood-api-call](https://github.com/jbuffer/flood-actions/actions/workflows/api-daily-call.yml/badge.svg)
+
+
+
 # Flood API call data warehousing
 
 <img src="https://media.giphy.com/media/if4XHBAIKurDohCbZF/giphy.gif" width="50px"/>
