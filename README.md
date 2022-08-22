@@ -8,17 +8,16 @@ A repository that uses GitHub Actions to schedule the daily request of flood dat
 
 ## Structure
 
-
 ```
 .
-├── .github
+├── .github/workflows
 │   └── api-daily-call.yml
 ├── data
 │   └── flood-data.csv
-├── requirements.txt
 ├── .gitignore
-├── get_data.py
+├── LICENCE
 ├── README.md
+├── get_data.py
 └── requirements.txt
 
 ```
