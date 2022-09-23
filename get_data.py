@@ -64,6 +64,7 @@ def get_polys(df):
             r2 = requests.get(df['polygon_url'].iloc[i]).json()
             df['long'].iloc[i] = r2['features'][0]['geometry']['coordinates'][0][0][i][0]
             df['lat'].iloc[i] = r2['features'][0]['geometry']['coordinates'][0][0][i][1]
+            df['coords'] = r2['features'][0]['geometry']['coordinates'][0]
 
             r3 = requests.get(df['polygon_url'].iloc[i]).json()
             df['description'].iloc[i] =r3['features'][0]['properties']['DESCRIP']
