@@ -1,7 +1,8 @@
-import requests
-import pandas as pd
-import numpy as np
 from datetime import datetime
+import numpy as np
+import pandas as pd
+import requests
+
 
 def get_data():
     '''create a dataframe from
@@ -13,13 +14,12 @@ def get_data():
 
     r = requests.get(url)
     if r.status_code == 200:
-        print('Success')
+        print('Successfully made the request')
         r = r.json()
-        for i in range(len(r['items'])):
-            print(r.keys)
+        for i, value in enumerate(r['items']):
             dict_temp['date'] = datetime.today()
             dict_temp['data_status'] = 'Data available'
-            dict_temp['flood_area_id']= r['items'][i]['floodAreaID']
+            dict_temp['flood_area_id'] = r['items'][i]['floodAreaID']
             dict_temp['county'] = r['items'][i]['floodArea']['county']
             dict_temp['severity'] = r['items'][i]['severity']
             dict_temp['severity_level'] = r['items'][i]['severityLevel']
@@ -31,8 +31,9 @@ def get_data():
         df = pd.DataFrame.from_dict(data)
     else:
         print('Cannot connect to server')
-    
+
     if df.empty:
+        # create empty dataframe
         df = pd.DataFrame({
                 'date': datetime.today(),
                 'data_status': 'No Flood Data',
@@ -46,43 +47,44 @@ def get_data():
                 'riverorsea': np.nan
                 },
                 index=[0])
-    return (df)
 
-def get_polys(df):
-    '''take dataframe created 
-    by `get_data` function and 
-    append additional columns'''
-    df['lat'] = np.nan
-    df['long'] = np.nan
-    df['coords'] = np.nan
-    df['description']= np.nan
-    df['CTY19NM'] = np.nan
-    if df['flood_area_id'].hasnans==False:
-        for i in range(len(df['polygon_url'])):
-            if i % 10 == 0:
-                print('{} of {} urls processed.\r'.format(i, len(df)))
-            r2 = requests.get(df['polygon_url'].iloc[i]).json()
-            df['long'].iloc[i] = r2['features'][0]['geometry']['coordinates'][0][0][i][0]
-            df['lat'].iloc[i] = r2['features'][0]['geometry']['coordinates'][0][0][i][1]
-            df['coords'] = r2['features'][0]['geometry']['coordinates'][0]
+    # get further information from url
+    poly_dict_temp = {}
+    poly_data = []
 
-            r3 = requests.get(df['polygon_url'].iloc[i]).json()
-            df['description'].iloc[i] =r3['features'][0]['properties']['DESCRIP']
-            df['CTY19NM'].iloc[i] = r3['features'][0]['properties']['LA_NAME']
-    else:
-        print('No new records')
-    return(df)
+    for i, value in enumerate(df['flood_area_id']):
+        if df['flood_area_id'][i] != np.nan:
+            for url in df['polygon_url']:
+                r_poly = requests.get(url).json()
+                poly_dict_temp['coords'] = r_poly['features'][0]['geometry']['coordinates'][0] # noqaE501
+                poly_dict_temp['long'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0] # noqaE501
+                poly_dict_temp['lat'] = r_poly['features'][0]['geometry']['coordinates'][0][0][1] # noqaE501
+                poly_dict_temp['description'] = r_poly['features'][0]['properties']['DESCRIP'] # noqaE501
+                poly_dict_temp['CTY19NM'] = r_poly['features'][0]['properties']['LA_NAME'] # noqaE501
+                poly_data.append(poly_dict_temp)
+        else:
+            for url in df['polygon_url']:
+                poly_dict_temp['coords'] = np.nan
+                poly_dict_temp['long'] = np.nan
+                poly_dict_temp['lat'] = np.nan
+                poly_dict_temp['description'] = np.nan
+                poly_dict_temp['CTY19NM'] = np.nan
+                poly_data.append(poly_dict_temp)
 
-# return dataframe derived from functions
-df = get_data()
-df = get_polys(df)
+    df_poly = pd.DataFrame.from_dict(poly_data)
+    df_final = pd.concat([df, df_poly], axis=1)
 
-# read in data and append
-df_historical = pd.read_csv('data/flood-data.csv')
-df_historical = pd.concat([df_historical,df])
-df_historical['date'] = pd.to_datetime(df_historical['date'])
-df_historical.sort_values('date', ascending=False, inplace=True)
-df_historical.drop_duplicates(inplace=True)
+    df_final.drop_duplicates(subset=['flood_area_id'], inplace=True)
 
-# save updated file 
-df_historical.to_csv('data/flood-data.csv', index = False)
+    # read in data and append
+    df_historical = pd.read_csv('data/flood-data.csv')
+    df_historical = pd.concat([df_historical, df_final])
+    df_historical['date'] = pd.to_datetime(df_historical['date'])
+    df_historical.sort_values('date', ascending=False, inplace=True)
+    # save updated file
+    df_historical.to_csv('data/flood-data.csv', index=False)
+    print('Updated dataset')
+
+
+if __name__ == "__main__":
+    get_data()
