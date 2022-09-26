@@ -1,4 +1,5 @@
 ![flood-api-call](https://github.com/jbuffer/flood-actions/actions/workflows/api-daily-call.yml/badge.svg)
+![linting](https://github.com/jbuffer/flood-actions/actions/workflows/flake8.yml/badge.svg)
 
 
 
