@@ -56,7 +56,7 @@ def get_data():
         if df['flood_area_id'][i] != np.nan:
             for url in df['polygon_url']:
                 r_poly = requests.get(url).json()
-                poly_dict_temp['coords'] = r_poly['features'][0]['geometry']['coordinates'][0] # noqaE501
+                poly_dict_temp['coords'] = r_poly['features'][0]['geometry']
                 poly_dict_temp['long'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0] # noqaE501
                 poly_dict_temp['lat'] = r_poly['features'][0]['geometry']['coordinates'][0][0][1] # noqaE501
                 poly_dict_temp['description'] = r_poly['features'][0]['properties']['DESCRIP'] # noqaE501
