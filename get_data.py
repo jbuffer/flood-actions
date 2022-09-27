@@ -53,23 +53,24 @@ def get_data():
     poly_data = []
 
     for i, value in enumerate(df['flood_area_id']):
+        url = df['polygon_url'][i]
         if df['flood_area_id'][i] != np.nan:
-            for url in df['polygon_url']:
-                r_poly = requests.get(url).json()
-                poly_dict_temp['coords'] = r_poly['features'][0]['geometry']
-                poly_dict_temp['long'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0] # noqaE501
-                poly_dict_temp['lat'] = r_poly['features'][0]['geometry']['coordinates'][0][0][1] # noqaE501
-                poly_dict_temp['description'] = r_poly['features'][0]['properties']['DESCRIP'] # noqaE501
-                poly_dict_temp['CTY19NM'] = r_poly['features'][0]['properties']['LA_NAME'] # noqaE501
-                poly_data.append(poly_dict_temp)
+            print('Flood area included')
+            r_poly = requests.get(url).json()
+            poly_dict_temp['coords'] = r_poly['features'][0]['geometry']
+            poly_dict_temp['long'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0][0] # noqaE501
+            poly_dict_temp['lat'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0][1] # noqaE501
+            poly_dict_temp['description'] = r_poly['features'][0]['properties']['DESCRIP'] # noqaE501
+            poly_dict_temp['CTY19NM'] = r_poly['features'][0]['properties']['LA_NAME'] # noqaE501
+            poly_data.append(poly_dict_temp)           
         else:
-            for url in df['polygon_url']:
-                poly_dict_temp['coords'] = np.nan
-                poly_dict_temp['long'] = np.nan
-                poly_dict_temp['lat'] = np.nan
-                poly_dict_temp['description'] = np.nan
-                poly_dict_temp['CTY19NM'] = np.nan
-                poly_data.append(poly_dict_temp)
+            poly_dict_temp['coords'] = np.nan
+            poly_dict_temp['long'] = np.nan
+            poly_dict_temp['lat'] = np.nan
+            poly_dict_temp['description'] = np.nan
+            poly_dict_temp['CTY19NM'] = np.nan
+
+            poly_data.append(poly_dict_temp)
 
     df_poly = pd.DataFrame.from_dict(poly_data)
     df_final = pd.concat([df, df_poly], axis=1)
