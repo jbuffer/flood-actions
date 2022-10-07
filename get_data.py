@@ -58,11 +58,15 @@ def get_data():
             print('Flood area included')
             r_poly = requests.get(url).json()
             poly_dict_temp['coords'] = r_poly['features'][0]['geometry']
-            poly_dict_temp['long'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0][0] # noqaE501
-            poly_dict_temp['lat'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0][1] # noqaE501
+            try:
+                poly_dict_temp['long'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0][0] # noqaE501
+                poly_dict_temp['lat'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0][1] # noqaE501
+            except TypeError:
+                poly_dict_temp['long'] = r_poly['features'][0]['geometry']['coordinates'][0][0][0] # noqaE501
+                poly_dict_temp['lat'] = r_poly['features'][0]['geometry']['coordinates'][0][0][1] # noqaE501
             poly_dict_temp['description'] = r_poly['features'][0]['properties']['DESCRIP'] # noqaE501
             poly_dict_temp['CTY19NM'] = r_poly['features'][0]['properties']['LA_NAME'] # noqaE501
-            poly_data.append(poly_dict_temp)           
+            poly_data.append(poly_dict_temp)
         else:
             poly_dict_temp['coords'] = np.nan
             poly_dict_temp['long'] = np.nan
