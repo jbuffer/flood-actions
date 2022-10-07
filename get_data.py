@@ -7,7 +7,6 @@ import requests
 def get_data():
     '''create a dataframe from
     the flood api call'''
-    dict_temp = {}
     data = []
 
     url = 'http://environment.data.gov.uk/flood-monitoring/id/floods'
@@ -16,6 +15,7 @@ def get_data():
     if r.status_code == 200:
         print('Successfully made the request')
         r = r.json()
+        dict_temp = {}
         for i, value in enumerate(r['items']):
             dict_temp['date'] = datetime.today()
             dict_temp['data_status'] = 'Data available'
@@ -49,10 +49,10 @@ def get_data():
                 index=[0])
 
     # get further information from url
-    poly_dict_temp = {}
     poly_data = []
 
     for i, value in enumerate(df['flood_area_id']):
+        poly_dict_temp = {}
         url = df['polygon_url'][i]
         if df['flood_area_id'][i] != np.nan:
             print('Flood area included')
