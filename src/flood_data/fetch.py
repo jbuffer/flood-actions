@@ -51,7 +51,7 @@ def fetch_flood_data() -> pd.DataFrame:
 
         df = pd.DataFrame(data)
 
-    except requests.RequestException as e:
+    except Exception as e:
         logger.error(f"Failed to connect to API: {e}")
         df = pd.DataFrame()
 

@@ -116,7 +116,7 @@ class TestGetData:
         )
         mock_fetch_poly.return_value = pd.DataFrame({"long": [-1.5], "lat": [52.5]})
 
-        with patch("src.flood_data.fetch.df.to_csv"):
+        with patch("pandas.DataFrame.to_csv"):
             get_data()
 
         mock_fetch_flood.assert_called_once()

@@ -20,14 +20,19 @@ def extract_coordinates(
     """
     try:
         coords = geometry["coordinates"]
-        # Try nested array format first
+        # Try nested array format first (e.g. [[[[long, lat], ...]]])
         try:
             long = coords[0][0][0][0]
             lat = coords[0][0][0][1]
         except (TypeError, IndexError):
-            # Fallback to simpler format
-            long = coords[0][0][0]
-            lat = coords[0][0][1]
+            try:
+                # Try one level of nesting (e.g. [[[long, lat], ...]])
+                long = coords[0][0][0]
+                lat = coords[0][0][1]
+            except (TypeError, IndexError):
+                # Fallback to simple pair format (e.g. [[long, lat]])
+                long = coords[0][0]
+                lat = coords[0][1]
         return float(long), float(lat)
     except (KeyError, IndexError, TypeError) as e:
         logger.warning(f"Failed to extract coordinates: {e}")
