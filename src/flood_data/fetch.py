@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 import requests
 
-from src.flood_data.config import FLOOD_API_URL, CSV_PATH, REQUEST_TIMEOUT, DATA_DIR
-from src.flood_data.utils import extract_coordinates, ensure_data_directory
+from src.flood_data.config import CSV_PATH, DATA_DIR, FLOOD_API_URL, REQUEST_TIMEOUT
+from src.flood_data.utils import ensure_data_directory, extract_coordinates
 
 logger = logging.getLogger(__name__)
 

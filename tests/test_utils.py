@@ -1,9 +1,9 @@
 """Tests for utils module."""
 
-import tempfile
 import os
+import tempfile
 
-from src.flood_data.utils import ensure_data_directory, create_empty_flood_dataframe
+from src.flood_data.utils import create_empty_flood_dataframe, ensure_data_directory
 
 
 class TestEnsureDataDirectory:

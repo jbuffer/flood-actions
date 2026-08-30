@@ -1,8 +1,9 @@
 """Unit tests for flood data fetching."""
 
-from unittest.mock import patch, MagicMock
-import pandas as pd
+from unittest.mock import MagicMock, patch
+
 import numpy as np
+import pandas as pd
 
 from src.flood_data.fetch import fetch_flood_data, fetch_polygon_data, get_data
 from src.flood_data.utils import extract_coordinates

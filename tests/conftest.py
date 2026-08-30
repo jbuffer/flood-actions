@@ -1,7 +1,7 @@
 """Shared pytest fixtures and configuration."""
 
-import pytest
 import pandas as pd
+import pytest
 
 
 @pytest.fixture
