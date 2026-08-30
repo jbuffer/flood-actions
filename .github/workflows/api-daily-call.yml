@@ -29,11 +29,15 @@ jobs:
           
       - name: install python packages
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
+          pip install -r requirements-dev.txt
 
-      - name: execute py script # run get_data.py to get the latest data
-        run: python get_data.py
+      - name: Run tests
+        run: pytest tests/ -v
+
+      - name: execute py script # run fetch module to get the latest data
+        run: python -m src.flood_data.fetch
       
       - name: commit files
         run: |
