@@ -3,18 +3,18 @@
 import logging
 from typing import Any, Optional
 
-import numpy as np
-
 logger = logging.getLogger(__name__)
 
 
-def extract_coordinates(geometry: dict[str, Any]) -> tuple[Optional[float], Optional[float]]:
+def extract_coordinates(
+    geometry: dict[str, Any],
+) -> tuple[Optional[float], Optional[float]]:
     """
     Extract latitude and longitude from GeoJSON geometry.
-    
+
     Args:
         geometry: GeoJSON geometry dictionary
-        
+
     Returns:
         Tuple of (longitude, latitude) or (None, None) if extraction fails
     """
@@ -37,25 +37,25 @@ def extract_coordinates(geometry: dict[str, Any]) -> tuple[Optional[float], Opti
 def ensure_data_directory(data_dir: str) -> None:
     """
     Ensure the data directory exists.
-    
+
     Args:
         data_dir: Path to data directory
     """
     import os
+
     os.makedirs(data_dir, exist_ok=True)
     logger.debug(f"Data directory ensured at {data_dir}")
 
 
-def create_empty_flood_dataframe() -> "pd.DataFrame":
+def create_empty_flood_dataframe():
     """
     Create an empty flood data dataframe with the correct schema.
-    
+
     Returns:
         Empty pandas DataFrame with flood data columns
     """
     import pandas as pd
-    from src.flood_data.config import FLOOD_COLUMNS
-    
+
     return pd.DataFrame({
         'date': pd.to_datetime([]),
         'data_status': [],

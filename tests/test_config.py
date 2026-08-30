@@ -5,7 +5,10 @@ from src.flood_data import config
 
 def test_api_url_configured():
     """Test that API URL is configured."""
-    assert config.FLOOD_API_URL == "http://environment.data.gov.uk/flood-monitoring/id/floods"
+    expected_url = (
+        "http://environment.data.gov.uk/flood-monitoring/id/floods"
+    )
+    assert config.FLOOD_API_URL == expected_url
 
 
 def test_csv_path_configured():

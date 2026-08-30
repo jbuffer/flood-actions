@@ -1,13 +1,9 @@
 """Tests for utils module."""
 
-import pytest
-import numpy as np
-from unittest.mock import patch
 import tempfile
 import os
 
 from src.flood_data.utils import (
-    extract_coordinates,
     ensure_data_directory,
     create_empty_flood_dataframe
 )
@@ -15,14 +11,14 @@ from src.flood_data.utils import (
 
 class TestEnsureDataDirectory:
     """Test data directory creation."""
-    
+
     def test_create_directory(self):
         """Test that directory is created."""
         with tempfile.TemporaryDirectory() as tmpdir:
             test_dir = os.path.join(tmpdir, 'test_data')
             ensure_data_directory(test_dir)
             assert os.path.exists(test_dir)
-    
+
     def test_existing_directory(self):
         """Test that existing directory is handled gracefully."""
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -32,7 +28,7 @@ class TestEnsureDataDirectory:
 
 class TestCreateEmptyFloodDataframe:
     """Test empty dataframe creation."""
-    
+
     def test_empty_dataframe_structure(self):
         """Test that empty dataframe has correct structure."""
         df = create_empty_flood_dataframe()

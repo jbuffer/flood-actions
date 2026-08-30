@@ -1,7 +1,6 @@
 """Configuration settings for flood data collection."""
 
 import os
-from typing import Optional
 
 # API Configuration
 FLOOD_API_URL: str = "http://environment.data.gov.uk/flood-monitoring/id/floods"
