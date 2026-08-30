@@ -19,7 +19,7 @@ def extract_coordinates(
         Tuple of (longitude, latitude) or (None, None) if extraction fails
     """
     try:
-        coords = geometry['coordinates']
+        coords = geometry["coordinates"]
         # Try nested array format first
         try:
             long = coords[0][0][0][0]
@@ -56,15 +56,17 @@ def create_empty_flood_dataframe():
     """
     import pandas as pd
 
-    return pd.DataFrame({
-        'date': pd.to_datetime([]),
-        'data_status': [],
-        'flood_area_id': [],
-        'county': [],
-        'severity': [],
-        'severity_level': [],
-        'time_changed': [],
-        'flood_id': [],
-        'polygon_url': [],
-        'riverorsea': []
-    })
+    return pd.DataFrame(
+        {
+            "date": pd.to_datetime([]),
+            "data_status": [],
+            "flood_area_id": [],
+            "county": [],
+            "severity": [],
+            "severity_level": [],
+            "time_changed": [],
+            "flood_id": [],
+            "polygon_url": [],
+            "riverorsea": [],
+        }
+    )

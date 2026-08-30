@@ -8,12 +8,7 @@ import numpy as np
 import pandas as pd
 import requests
 
-from src.flood_data.config import (
-    FLOOD_API_URL,
-    CSV_PATH,
-    REQUEST_TIMEOUT,
-    DATA_DIR
-)
+from src.flood_data.config import FLOOD_API_URL, CSV_PATH, REQUEST_TIMEOUT, DATA_DIR
 from src.flood_data.utils import extract_coordinates, ensure_data_directory
 
 logger = logging.getLogger(__name__)
@@ -39,18 +34,18 @@ def fetch_flood_data() -> pd.DataFrame:
 
         api_data = response.json()
 
-        for item in api_data.get('items', []):
+        for item in api_data.get("items", []):
             flood_record = {
-                'date': datetime.today(),
-                'data_status': 'Data available',
-                'flood_area_id': item.get('floodAreaID'),
-                'county': item.get('floodArea', {}).get('county'),
-                'severity': item.get('severity'),
-                'severity_level': item.get('severityLevel'),
-                'time_changed': item.get('timeSeverityChanged'),
-                'flood_id': item.get('floodArea', {}).get('@id'),
-                'polygon_url': item.get('floodArea', {}).get('polygon'),
-                'riverorsea': item.get('floodArea', {}).get('riverOrSea')
+                "date": datetime.today(),
+                "data_status": "Data available",
+                "flood_area_id": item.get("floodAreaID"),
+                "county": item.get("floodArea", {}).get("county"),
+                "severity": item.get("severity"),
+                "severity_level": item.get("severityLevel"),
+                "time_changed": item.get("timeSeverityChanged"),
+                "flood_id": item.get("floodArea", {}).get("@id"),
+                "polygon_url": item.get("floodArea", {}).get("polygon"),
+                "riverorsea": item.get("floodArea", {}).get("riverOrSea"),
             }
             data.append(flood_record)
 
@@ -63,18 +58,20 @@ def fetch_flood_data() -> pd.DataFrame:
     # Create empty dataframe if no data received
     if df.empty:
         logger.info("No flood data available, creating empty dataframe")
-        df = pd.DataFrame({
-            'date': [datetime.today()],
-            'data_status': ['No Flood Data'],
-            'flood_area_id': [np.nan],
-            'county': [np.nan],
-            'severity': [np.nan],
-            'severity_level': [np.nan],
-            'time_changed': [np.nan],
-            'flood_id': [np.nan],
-            'polygon_url': [np.nan],
-            'riverorsea': [np.nan]
-        })
+        df = pd.DataFrame(
+            {
+                "date": [datetime.today()],
+                "data_status": ["No Flood Data"],
+                "flood_area_id": [np.nan],
+                "county": [np.nan],
+                "severity": [np.nan],
+                "severity_level": [np.nan],
+                "time_changed": [np.nan],
+                "flood_id": [np.nan],
+                "polygon_url": [np.nan],
+                "riverorsea": [np.nan],
+            }
+        )
 
     return df
 
@@ -94,60 +91,59 @@ def fetch_polygon_data(df: pd.DataFrame) -> pd.DataFrame:
     for idx, row in df.iterrows():
         poly_record: dict[str, Any] = {}
 
-        if pd.isna(row['flood_area_id']):
+        if pd.isna(row["flood_area_id"]):
             # No flood data, set NaN values
             poly_record = {
-                'coords': np.nan,
-                'long': np.nan,
-                'lat': np.nan,
-                'description': np.nan,
-                'CTY19NM': np.nan
+                "coords": np.nan,
+                "long": np.nan,
+                "lat": np.nan,
+                "description": np.nan,
+                "CTY19NM": np.nan,
             }
         else:
             try:
-                url = row['polygon_url']
+                url = row["polygon_url"]
                 logger.debug(f"Fetching polygon data from {url}")
                 response = requests.get(url, timeout=REQUEST_TIMEOUT)
                 response.raise_for_status()
                 geo_data = response.json()
 
-                features = geo_data.get('features', [])
+                features = geo_data.get("features", [])
                 if features:
                     feature = features[0]
-                    geometry = feature.get('geometry', {})
-                    properties = feature.get('properties', {})
+                    geometry = feature.get("geometry", {})
+                    properties = feature.get("properties", {})
 
                     long, lat = extract_coordinates(geometry)
 
                     poly_record = {
-                        'coords': geometry,
-                        'long': long,
-                        'lat': lat,
-                        'description': properties.get('DESCRIP'),
-                        'CTY19NM': properties.get('LA_NAME')
+                        "coords": geometry,
+                        "long": long,
+                        "lat": lat,
+                        "description": properties.get("DESCRIP"),
+                        "CTY19NM": properties.get("LA_NAME"),
                     }
                 else:
                     poly_record = {
-                        'coords': np.nan,
-                        'long': np.nan,
-                        'lat': np.nan,
-                        'description': np.nan,
-                        'CTY19NM': np.nan
+                        "coords": np.nan,
+                        "long": np.nan,
+                        "lat": np.nan,
+                        "description": np.nan,
+                        "CTY19NM": np.nan,
                     }
-                    flood_id = row['flood_area_id']
+                    flood_id = row["flood_area_id"]
                     logger.warning(
-                        f"No features found in polygon response for "
-                        f"{flood_id}"
+                        f"No features found in polygon response for " f"{flood_id}"
                     )
 
             except (requests.RequestException, KeyError, IndexError) as e:
                 logger.error(f"Error fetching polygon data: {e}")
                 poly_record = {
-                    'coords': np.nan,
-                    'long': np.nan,
-                    'lat': np.nan,
-                    'description': np.nan,
-                    'CTY19NM': np.nan
+                    "coords": np.nan,
+                    "long": np.nan,
+                    "lat": np.nan,
+                    "description": np.nan,
+                    "CTY19NM": np.nan,
                 }
 
         poly_data.append(poly_record)
@@ -183,7 +179,7 @@ def get_data() -> None:
         df_current = pd.concat([df_floods, df_poly], axis=1)
 
         # Remove duplicates
-        df_current = df_current.drop_duplicates(subset=['flood_area_id'])
+        df_current = df_current.drop_duplicates(subset=["flood_area_id"])
 
         # Read historical data
         try:
@@ -195,13 +191,11 @@ def get_data() -> None:
             df_historical = df_current.copy()
 
         # Append new data
-        df_updated = pd.concat(
-            [df_historical, df_current], ignore_index=True
-        )
+        df_updated = pd.concat([df_historical, df_current], ignore_index=True)
 
         # Process dates
-        df_updated['date'] = pd.to_datetime(df_updated['date'])
-        df_updated = df_updated.sort_values('date', ascending=False)
+        df_updated["date"] = pd.to_datetime(df_updated["date"])
+        df_updated = df_updated.sort_values("date", ascending=False)
 
         # Save updated file
         df_updated.to_csv(CSV_PATH, index=False)
@@ -215,6 +209,6 @@ def get_data() -> None:
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
     get_data()
